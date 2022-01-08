@@ -12,6 +12,7 @@ This package is currently under development...
 
 from selenium import webdriver
 from bs4 import BeautifulSoup
+from pathlib import Path
 
 import time
 import urllib.request
@@ -28,7 +29,8 @@ def get_driver():
         driver.execute_script('window.scrollBy(0,document.body.scrollHeight)')
         try:
             # for clicking show more results button
-            driver.find_element('//*[@id="islmp"]/div/div/div/div/div[2]/div[2]/input').click()
+            driver.find_element(
+                '//*[@id="islmp"]/div/div/div/div/div[2]/div[2]/input').click()
         except Exception:
             pass
         time.sleep(3)
@@ -45,19 +47,21 @@ def download_images(driver):
     for i, v in enumerate(img_tags):
         try:
             loading_bar(i + 1, length)
-            urllib.request.urlretrieve(v['src'], f"./downloads/{keyword}/{str(i + 1)}.jpg")
+            urllib.request.urlretrieve(
+                v['src'], f"{downloads_path}/{keyword}/{str(i + 1)}.jpg")
         except Exception:
             pass
     print()
 
 
 def loading_bar(n, l):
-    print("\rDownloading : {} ({:.2f}%)".format("█" * round(n / l * 100 / 2), n / l * 100), end="")
+    print("\rDownloading : {} ({:.2f}%)".format(
+        "█" * round(n / l * 100 / 2), n / l * 100), end="")
 
 
 def create_dir():
     try:
-        os.makedirs('downloads/{}'.format(keyword))
+        os.makedirs(f'{downloads_path}/{keyword}')
     except Exception as e:
         print(e)
 
@@ -65,22 +69,27 @@ def create_dir():
 def main():
     global keyword
     global driver_path
+    global downloads_path
+
+    downloads_path = os.path.join(
+        str(Path.home()), 'Downloads', 'noicesoup_dl')
 
     parser = argparse.ArgumentParser(
         description='A simple python package for scraping and downloading images from Google')
-    parser.add_argument('-k', '--keyword', help='Input search keyword', required=True)
-    parser.add_argument('-cd', '--chromedriver', help='Input ChromeDriver path', default="chromedriver")
+    parser.add_argument('-k', '--keyword',
+                        help='Input search keyword', required=True)
+    parser.add_argument('-cd', '--chromedriver',
+                        help='Input ChromeDriver path', default="chromedriver")
     args = parser.parse_args()
 
     keyword = args.keyword
     driver_path = args.chromedriver
     print(f'{keyword=}')
-
     create_dir()
     driver = get_driver()
-    print('=' * 100)
+    print('=' * os.get_terminal_size().columns)
     download_images(driver)
-    print('=' * 100)
+    print('=' * os.get_terminal_size().columns)
     print('Done!')
 
 
