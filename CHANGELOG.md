@@ -13,5 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `chormedriver.exe` for testing.
 - [README](README.md)
 
+## 0.1.1 - 2022-01-09
+### Changed
+- Set default download directory to local `Downloads`.
+- `=` lines will be fit to width of terminal (noicesoup.py:line 84,86).
+
 [Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/olivierlacan/keep-a-changelog/releases/tag/v0.1.0
