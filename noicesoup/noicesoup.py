@@ -10,14 +10,16 @@ Images will be saved in "downloads/<keyword>"
 This package is currently under development...
 """
 
-from selenium import webdriver
-from bs4 import BeautifulSoup
-from pathlib import Path
-
+import threading
 import time
 import urllib.request
 import os
 import argparse
+
+from time import sleep
+from selenium import webdriver
+from bs4 import BeautifulSoup
+from pathlib import Path
 
 
 def get_driver():
@@ -59,17 +61,32 @@ def loading_bar(n, l):
         "█" * round(n / l * 100 / 2), n / l * 100), end="")
 
 
+def loading_spinner():
+    msg = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
+    len_msg = len(msg)
+    counter = 0
+    while True:
+        displayed = ""
+        displayed += msg[(counter + 1) % len_msg]
+        print(f"\r{displayed} Loading {keyword=}", end="")
+        sleep(0.05)
+        counter = (counter + 1) % len_msg
+        if stop_thread:
+            break
+
+
 def create_dir():
     try:
         os.makedirs(f'{downloads_path}/{keyword}')
-    except Exception as e:
-        print(e)
+    except Exception:
+        pass
 
 
 def main():
     global keyword
     global driver_path
     global downloads_path
+    global stop_thread
 
     downloads_path = os.path.join(
         str(Path.home()), 'Downloads', 'noicesoup_dl')
@@ -84,10 +101,14 @@ def main():
 
     keyword = args.keyword
     driver_path = args.chromedriver
-    print(f'{keyword=}')
+    stop_thread = False
+    thr = threading.Thread(target=loading_spinner)
+    thr.start()
     create_dir()
     driver = get_driver()
-    print('=' * os.get_terminal_size().columns)
+    stop_thread = True
+
+    print('\r'+'=' * os.get_terminal_size().columns)
     download_images(driver)
     print('=' * os.get_terminal_size().columns)
     print('Done!')
