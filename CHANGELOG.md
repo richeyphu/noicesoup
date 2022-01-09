@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add loading spinner while scraping images.
 
 ### Fixed
-- Fix error shown when create directory.
+- Fix error shown when creating a directory.
 
 ## 0.1.1 - 2022-01-09
 ### Changed
